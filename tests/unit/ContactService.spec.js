@@ -15,6 +15,7 @@ describe('src/contacts/index.js', function() {
 		contactRepository = sinon.stub({
 			save: () => {},
 			get: () => {},
+			getAll: () => {},
 			getByEmail: () => {},
 		});
 		contactRepository.getByEmail.resolves([]);
@@ -92,5 +93,14 @@ describe('src/contacts/index.js', function() {
 				expect(contactRepository.get.calledWith(contactId)).to.be.true;
 				done();
 			});
+	});
+
+	it('should be possible to get all contacts stored', async () => {
+		const contactStored = [];
+		contactRepository.getAll.resolves(contactStored);
+		const contacts = await service.getAll();
+
+		expect(contacts).to.equals(contactStored);
+		expect(contactRepository.getAll.calledOnce).to.be.true;
 	});
 });

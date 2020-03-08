@@ -15,9 +15,12 @@ function ContactService({contactRepository}) {
 
 	const get = async (contactId) => contactRepository.get(contactId);
 
+	const getAll = async () => contactRepository.getAll();
+
 	return {
 		create,
 		get,
+		getAll,
 	};
 }
 

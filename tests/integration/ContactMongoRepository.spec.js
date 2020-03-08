@@ -57,7 +57,7 @@ describe('src/contacts/repositories/ContactMongoRepository.js', function() {
 		});
 
 		it('should be possible to get contact by email', async () => {
-			const result = await repository.getByEmail(contactSaved.email);
+			const result = await repository.getByEmail(contactSaved.getEmail());
 			expect(result).to.have.lengthOf(1);
 			expect(result.pop().getId()).to.equals(contactSaved.getId());
 		});
@@ -78,6 +78,12 @@ describe('src/contacts/repositories/ContactMongoRepository.js', function() {
 				Error,
 				`contact with ${id} doesnt exist`,
 			);
+		});
+
+		it('should be possible to get all contacts stored', async () => {
+			const contacts = await repository.getAll();
+			expect(contacts).to.have.lengthOf(1);
+			expect(contacts.pop()).to.deep.equals(contactSaved);
 		});
 	});
 });

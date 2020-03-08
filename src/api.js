@@ -8,6 +8,7 @@ let server;
 
 const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 	app.use(bodyParser.json());
+
 	app.post(
 		'/contacts',
 		[
@@ -29,10 +30,20 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			}
 		},
 	);
+
 	app.get('/contacts/:id', async (req, res) => {
 		try {
 			const contact = await contactsService.get(req.params.id);
 			res.status(200).json(contact);
+		} catch (err) {
+			res.status(500).json({err});
+		}
+	});
+
+	app.get('/contacts', async (req, res) => {
+		try {
+			const contacts = await contactsService.getAll();
+			res.status(200).json(contacts);
 		} catch (err) {
 			res.status(500).json({err});
 		}

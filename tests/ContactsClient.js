@@ -20,7 +20,17 @@ async function create(dataToSave) {
 	}
 }
 
+async function getAll() {
+	try {
+		const response = await axios.get(CONTACT_URL);
+		return response.data;
+	} catch (err) {
+		throw new Error(err.response.status);
+	}
+}
+
 module.exports = {
 	create,
 	getById,
+	getAll,
 };

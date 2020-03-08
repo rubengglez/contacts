@@ -70,12 +70,19 @@ function ContactMongoRepository({urlMongo = 'mongodb://localhost:27017', dbName 
 		return convertToContact(document);
 	};
 
+	const getAll = async () => {
+		checkInitializated();
+		const result = await collection.find({}).toArray();
+		return result.map(convertToContact);
+	};
+
 	return {
 		init,
 		uninit,
 		save,
 		getByEmail,
 		get,
+		getAll,
 	};
 }
 

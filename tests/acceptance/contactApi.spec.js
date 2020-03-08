@@ -22,6 +22,10 @@ describe('Contact API. Given the server is up', () => {
 		return createContact();
 	});
 
+	it('when retrieving all contacts, an empty list should be returned', async () => {
+		expect(await contactsClient.getAll()).to.have.lengthOf(0);
+	});
+
 	describe('given a contact was created', () => {
 		let contactCreated;
 
@@ -32,6 +36,12 @@ describe('Contact API. Given the server is up', () => {
 		it('should be possible to get it', async () => {
 			const contact = await contactsClient.getById(contactCreated.id);
 			expect(contact).to.deep.include(contactCreated);
+		});
+
+		it('when retrieving all contacts, the contact created should be included', async () => {
+			const contacts = await contactsClient.getAll();
+			expect(contacts).to.have.lengthOf(1);
+			expect(contacts.pop()).to.deep.include(contactCreated);
 		});
 	});
 });

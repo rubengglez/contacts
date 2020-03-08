@@ -18,9 +18,11 @@ describe('src/api.js. Given the Api is running', function() {
 		contactsService = sinon.stub({
 			create: () => {},
 			get: () => {},
+			getAll: () => {},
 		});
 		contactsService.create.resolves(contactCreated);
-		contactsService.get.resolves(contactCreated);
+		contactsService.get.resolves({});
+		contactsService.getAll.resolves([]);
 		api.setupApi({contactsService}, {port: PORT_TEST});
 		app = api.getApp();
 	});
@@ -85,6 +87,16 @@ describe('src/api.js. Given the Api is running', function() {
 			.expect(200, {})
 			.then(() => {
 				expect(contactsService.get.calledWith(contactId)).to.be.true;
+				done();
+			})
+			.catch(done);
+	});
+
+	it('should be possible to get all contacts', (done) => {
+		requestApp('get')
+			.expect(200, [])
+			.then(() => {
+				expect(contactsService.getAll.calledOnce).to.be.true;
 				done();
 			})
 			.catch(done);
