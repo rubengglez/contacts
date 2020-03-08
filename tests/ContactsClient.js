@@ -8,8 +8,13 @@ function get(query) {
 	});
 }
 
-function create(dataToSave) {
-	return axios.post(CONTACT_URL, dataToSave);
+async function create(dataToSave) {
+	try {
+		const response = await axios.post(CONTACT_URL, dataToSave);
+		return response.data;
+	} catch (err) {
+		throw new Error(err.response.status);
+	}
 }
 
 module.exports = {
