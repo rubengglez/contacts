@@ -1,11 +1,14 @@
 const axios = require('axios');
 
-const CONTACT_URL = 'http://localhost:9000/Contacts';
+const CONTACT_URL = 'http://localhost:9000/contacts';
 
-function get(query) {
-	return axios.get(CONTACT_URL, {
-		params: query,
-	});
+async function getById(id) {
+	try {
+		const response = await axios.get(`${CONTACT_URL}/${id}`);
+		return response.data;
+	} catch (err) {
+		throw new Error(err.response.status);
+	}
 }
 
 async function create(dataToSave) {
@@ -19,5 +22,5 @@ async function create(dataToSave) {
 
 module.exports = {
 	create,
-	get,
+	getById,
 };

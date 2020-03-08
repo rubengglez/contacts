@@ -17,8 +17,10 @@ describe('src/api.js. Given the Api is running', function() {
 	before(() => {
 		contactsService = sinon.stub({
 			create: () => {},
+			get: () => {},
 		});
 		contactsService.create.resolves(contactCreated);
+		contactsService.get.resolves(contactCreated);
 		api.setupApi({contactsService}, {port: PORT_TEST});
 		app = api.getApp();
 	});
@@ -31,7 +33,7 @@ describe('src/api.js. Given the Api is running', function() {
 		api.stop();
 	});
 
-	const requestApp = () => request(app).post('/contacts');
+	const requestApp = (method = 'post', url = '/contacts') => request(app)[method](url);
 
 	it('when a POST to /contacts arrives with the proper data, then it should create a contact', (done) => {
 		requestApp()
@@ -75,5 +77,16 @@ describe('src/api.js. Given the Api is running', function() {
 	it('when a POST to /contacts arrives but the phone is missing, then a 400 error should be returned', (done) => {
 		delete contactToCreate.phone;
 		assertBadFormatError(contactToCreate, done);
+	});
+
+	it('should be possible to get a contact by id', (done) => {
+		const contactId = '123456789';
+		requestApp('get', `/contacts/${contactId}`)
+			.expect(200, {})
+			.then(() => {
+				expect(contactsService.get.calledWith(contactId)).to.be.true;
+				done();
+			})
+			.catch(done);
 	});
 });

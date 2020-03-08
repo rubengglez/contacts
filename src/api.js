@@ -29,6 +29,14 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			}
 		},
 	);
+	app.get('/contacts/:id', async (req, res) => {
+		try {
+			const contact = await contactsService.get(req.params.id);
+			res.status(200).json(contact);
+		} catch (err) {
+			res.status(500).json({err});
+		}
+	});
 	server = app.listen(port, () => console.log(`listening in port ${port}`));
 };
 

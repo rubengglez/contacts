@@ -5,6 +5,8 @@ const Contacts = require('../../src/contacts/index');
 const ContactDataBuilder = require('../builders/ContactDataBuilder');
 const Contact = require('../../src/contacts/Contact');
 
+const random = () => Math.random().toString();
+
 describe('src/contacts/index.js', function() {
 	let contactRepository;
 	let service;
@@ -12,6 +14,7 @@ describe('src/contacts/index.js', function() {
 	beforeEach(() => {
 		contactRepository = sinon.stub({
 			save: () => {},
+			get: () => {},
 			getByEmail: () => {},
 		});
 		contactRepository.getByEmail.resolves([]);
@@ -51,7 +54,7 @@ describe('src/contacts/index.js', function() {
 		expect(contactRepository.getByEmail.calledWith(dataToSave.email)).to.be.true;
 	});
 
-	it('an error should be returned when trying to create a contact with a email that already exists in another one', (done) => {
+	it('an error should be returned when trying to create a contact with a email that already exists in another contact', (done) => {
 		const [dataToSave, contactSaved] = createContactData();
 		contactRepository.getByEmail.resolves([contactSaved]);
 
@@ -63,6 +66,30 @@ describe('src/contacts/index.js', function() {
 			.catch(() => {
 				expect(contactRepository.save.notCalled).to.be.true;
 				expect(contactRepository.getByEmail.calledWith(dataToSave.email)).to.be.true;
+				done();
+			});
+	});
+
+	it('should be possible to get a contact by id', async () => {
+		const contactId = random();
+		const contactSaved = {};
+		contactRepository.get.resolves(contactSaved);
+		const contact = await service.get(contactId);
+
+		expect(contact).to.equals(contactSaved);
+		expect(contactRepository.get.calledWith(contactId)).to.be.true;
+	});
+
+	it('when an error happens when retrieving the contact, then an error should be returned', (done) => {
+		const contactId = random();
+		contactRepository.get.rejects(new Error('error'));
+		service
+			.get(contactId)
+			.then(() => {
+				done(new Error('an error should be returned'));
+			})
+			.catch(() => {
+				expect(contactRepository.get.calledWith(contactId)).to.be.true;
 				done();
 			});
 	});

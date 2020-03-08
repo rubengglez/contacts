@@ -6,10 +6,13 @@ const cleanDb = async ({
 	collectionName = 'contacts',
 } = {}) => {
 	const connection = await MongoClient.connect(urlMongo);
-	await connection
-		.db(dbName)
-		.collection(collectionName)
-		.drop();
+	try {
+		await connection
+			.db(dbName)
+			.collection(collectionName)
+			.drop();
+		await connection.close();
+	} catch (err) {}
 };
 
 module.exports = cleanDb;

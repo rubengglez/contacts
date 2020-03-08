@@ -1,10 +1,13 @@
 const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
 const {expect} = chai;
 
 const ContactRepository = require('../../src/contacts/repositories/ContactMongoRepository.js');
 const Contact = require('../../src/contacts/Contact');
 const ContactDataBuilder = require('../builders/ContactDataBuilder');
 const cleanDb = require('../utils/cleanDb');
+const {ObjectID} = require('mongodb');
 
 const random = () => Math.random().toString();
 
@@ -62,6 +65,19 @@ describe('src/contacts/repositories/ContactMongoRepository.js', function() {
 		it('when retrieving contacts by email with a data that doesnt exist in db, then a empty list should be returned', async () => {
 			const result = await repository.getByEmail(random());
 			expect(result).to.have.lengthOf(0);
+		});
+
+		it('should be possible to get the contact by its id', async () => {
+			const contact = await repository.get(contactSaved.getId());
+			expect(contact).to.deep.include(contactSaved);
+		});
+
+		it('when a id given doesnt match with a contact, then an error should be returned', () => {
+			const id = ObjectID.createFromTime();
+			return expect(repository.get(id)).to.be.rejectedWith(
+				Error,
+				`contact with ${id} doesnt exist`,
+			);
 		});
 	});
 });

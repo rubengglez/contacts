@@ -1,4 +1,4 @@
-const MongoClient = require('mongodb').MongoClient;
+const {MongoClient, ObjectID} = require('mongodb');
 const Contact = require('../Contact');
 
 const DB_NAME = 'local';
@@ -41,23 +41,33 @@ function ContactMongoRepository({urlMongo = 'mongodb://localhost:27017', dbName 
 		return data;
 	};
 
+	const convertToContact = (contactMongo) => {
+		return new Contact(convertMongoId(contactMongo));
+	};
+
 	const save = async (data) => {
 		checkInitializated();
 		if (!data.id) {
 			const result = await collection.insertOne(Object.assign({}, data), {
 				ignoreUndefined: true,
 			});
-			const contactData = convertMongoId(result.ops.pop());
-			return new Contact(contactData);
+			return convertToContact(result.ops.pop());
 		}
 	};
 
 	const getByEmail = async (email) => {
 		checkInitializated();
 		const result = await collection.find({email}).toArray();
-		return result.map((contactMongo) => {
-			return new Contact(convertMongoId(contactMongo));
-		});
+		return result.map(convertToContact);
+	};
+
+	const get = async (id) => {
+		checkInitializated();
+		const document = await collection.findOne({_id: new ObjectID(id)});
+		if (!document) {
+			throw new Error(`contact with ${id} doesnt exist`);
+		}
+		return convertToContact(document);
 	};
 
 	return {
@@ -65,6 +75,7 @@ function ContactMongoRepository({urlMongo = 'mongodb://localhost:27017', dbName 
 		uninit,
 		save,
 		getByEmail,
+		get,
 	};
 }
 

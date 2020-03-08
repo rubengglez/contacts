@@ -13,8 +13,11 @@ function ContactService({contactRepository}) {
 		return contactRepository.save(new Contact(data));
 	};
 
+	const get = async (contactId) => contactRepository.get(contactId);
+
 	return {
 		create,
+		get,
 	};
 }
 
