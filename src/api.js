@@ -48,6 +48,16 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			res.status(500).json({err});
 		}
 	});
+
+	app.delete('/contacts/:id', async (req, res) => {
+		try {
+			await contactsService.remove(req.params.id);
+			res.status(200).json({});
+		} catch (err) {
+			res.status(500).json({err});
+		}
+	});
+
 	server = app.listen(port, () => console.log(`listening in port ${port}`));
 };
 

@@ -72,7 +72,7 @@ describe('src/contacts/repositories/ContactMongoRepository.js', function() {
 			expect(contact).to.deep.include(contactSaved);
 		});
 
-		it('when a id given doesnt match with a contact, then an error should be returned', () => {
+		it('when getting a contact if the id given doesnt match with a contact, then an error should be returned', () => {
 			const id = ObjectID.createFromTime();
 			return expect(repository.get(id)).to.be.rejectedWith(
 				Error,
@@ -84,6 +84,19 @@ describe('src/contacts/repositories/ContactMongoRepository.js', function() {
 			const contacts = await repository.getAll();
 			expect(contacts).to.have.lengthOf(1);
 			expect(contacts.pop()).to.deep.equals(contactSaved);
+		});
+
+		it('should be possible to remove the contact by its id', async () => {
+			await repository.remove(contactSaved.getId());
+			expect(await repository.getAll()).to.have.lengthOf(0);
+		});
+
+		it('when deleting a contact if the id given doesnt match with a contact, then an error should be returned', () => {
+			const id = ObjectID.createFromTime();
+			return expect(repository.remove(id)).to.be.rejectedWith(
+				Error,
+				`contact with ${id} doesnt exist`,
+			);
 		});
 	});
 });

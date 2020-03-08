@@ -17,10 +17,13 @@ function ContactService({contactRepository}) {
 
 	const getAll = async () => contactRepository.getAll();
 
+	const remove = async (contactId) => contactRepository.remove(contactId);
+
 	return {
 		create,
 		get,
 		getAll,
+		remove,
 	};
 }
 

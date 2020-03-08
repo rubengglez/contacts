@@ -17,6 +17,7 @@ describe('src/contacts/index.js', function() {
 			get: () => {},
 			getAll: () => {},
 			getByEmail: () => {},
+			remove: () => {},
 		});
 		contactRepository.getByEmail.resolves([]);
 		service = Contacts({
@@ -102,5 +103,27 @@ describe('src/contacts/index.js', function() {
 
 		expect(contacts).to.equals(contactStored);
 		expect(contactRepository.getAll.calledOnce).to.be.true;
+	});
+
+	it('should be possible to delete a contact by id', async () => {
+		const contactId = random();
+		contactRepository.remove.resolves();
+		await service.remove(contactId);
+
+		expect(contactRepository.remove.calledWith(contactId)).to.be.true;
+	});
+
+	it('when an error happens when deleting a contact, then an error should be returned', (done) => {
+		const contactId = random();
+		contactRepository.remove.rejects(new Error('error'));
+		service
+			.remove(contactId)
+			.then(() => {
+				done(new Error('an error should be returned'));
+			})
+			.catch(() => {
+				expect(contactRepository.remove.calledWith(contactId)).to.be.true;
+				done();
+			});
 	});
 });

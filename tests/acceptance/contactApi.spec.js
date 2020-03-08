@@ -43,5 +43,10 @@ describe('Contact API. Given the server is up', () => {
 			expect(contacts).to.have.lengthOf(1);
 			expect(contacts.pop()).to.deep.include(contactCreated);
 		});
+
+		it('should be possible to remove a contact by id', async () => {
+			await contactsClient.del(contactCreated.id);
+			expect(await contactsClient.getAll()).to.have.lengthOf(0);
+		});
 	});
 });

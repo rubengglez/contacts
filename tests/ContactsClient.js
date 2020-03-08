@@ -11,6 +11,15 @@ async function getById(id) {
 	}
 }
 
+async function del(id) {
+	try {
+		const response = await axios.delete(`${CONTACT_URL}/${id}`);
+		return response.data;
+	} catch (err) {
+		throw new Error(err.response.status);
+	}
+}
+
 async function create(dataToSave) {
 	try {
 		const response = await axios.post(CONTACT_URL, dataToSave);
@@ -33,4 +42,5 @@ module.exports = {
 	create,
 	getById,
 	getAll,
+	del,
 };

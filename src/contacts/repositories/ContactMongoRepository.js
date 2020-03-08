@@ -76,6 +76,14 @@ function ContactMongoRepository({urlMongo = 'mongodb://localhost:27017', dbName 
 		return result.map(convertToContact);
 	};
 
+	const remove = async (id) => {
+		checkInitializated();
+		const operation = await collection.remove({_id: new ObjectID(id)});
+		if (operation.result.ok && operation.result.n === 0) {
+			throw new Error(`contact with ${id} doesnt exist`);
+		}
+	};
+
 	return {
 		init,
 		uninit,
@@ -83,6 +91,7 @@ function ContactMongoRepository({urlMongo = 'mongodb://localhost:27017', dbName 
 		getByEmail,
 		get,
 		getAll,
+		remove,
 	};
 }
 

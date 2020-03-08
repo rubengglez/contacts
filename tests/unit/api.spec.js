@@ -19,9 +19,11 @@ describe('src/api.js. Given the Api is running', function() {
 			create: () => {},
 			get: () => {},
 			getAll: () => {},
+			delete: () => {},
 		});
 		contactsService.create.resolves(contactCreated);
 		contactsService.get.resolves({});
+		contactsService.delete.resolves({});
 		contactsService.getAll.resolves([]);
 		api.setupApi({contactsService}, {port: PORT_TEST});
 		app = api.getApp();
@@ -97,6 +99,17 @@ describe('src/api.js. Given the Api is running', function() {
 			.expect(200, [])
 			.then(() => {
 				expect(contactsService.getAll.calledOnce).to.be.true;
+				done();
+			})
+			.catch(done);
+	});
+
+	it('should be possible to delete a contact by id', (done) => {
+		const contactId = '123456789';
+		requestApp('delete', `/contacts/${contactId}`)
+			.expect(200)
+			.then(() => {
+				expect(contactsService.delete.calledWith(contactId)).to.be.true;
 				done();
 			})
 			.catch(done);
