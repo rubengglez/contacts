@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  mongodb:
+    image: mongo:4
+    volumes:
+      - mongodb-db:/data/db
+      - mongodb-configdb:/data/configdb
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongodb-configdb:
+  mongodb-db:
