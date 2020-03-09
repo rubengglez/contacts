@@ -38,9 +38,19 @@ async function getAll() {
 	}
 }
 
+async function update(contactToUpdate) {
+	try {
+		const response = await axios.put(`${CONTACT_URL}/${contactToUpdate.id}`, contactToUpdate);
+		return response.data;
+	} catch (err) {
+		throw new Error(err.response.status);
+	}
+}
+
 module.exports = {
 	create,
 	getById,
 	getAll,
 	del,
+	update,
 };

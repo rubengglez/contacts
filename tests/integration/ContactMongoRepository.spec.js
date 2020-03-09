@@ -98,5 +98,12 @@ describe('src/contacts/repositories/ContactMongoRepository.js', function() {
 				`contact with ${id} doesnt exist`,
 			);
 		});
+
+		it('should be possible to update the contact', async () => {
+			const contactToUpdate = new Contact({...contactSaved, name: 'test'});
+			const contactUpdated = await repository.save(contactToUpdate);
+			expect(contactUpdated.getName()).to.equals('test');
+			expect(await repository.getAll()).to.have.lengthOf(1);
+		});
 	});
 });

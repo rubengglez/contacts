@@ -57,8 +57,9 @@ describe('src/contacts/index.js', function() {
 	});
 
 	it('an error should be returned when trying to create a contact with a email that already exists in another contact', (done) => {
-		const [dataToSave, contactSaved] = createContactData();
-		contactRepository.getByEmail.resolves([contactSaved]);
+		const [dataToSave] = createContactData();
+		const otherContact = createDataContact();
+		contactRepository.getByEmail.resolves([otherContact]);
 
 		service
 			.create(dataToSave)
@@ -125,5 +126,66 @@ describe('src/contacts/index.js', function() {
 				expect(contactRepository.remove.calledWith(contactId)).to.be.true;
 				done();
 			});
+	});
+
+	const createDataContact = () =>
+		ContactDataBuilder.of()
+			.withRandomId()
+			.buildWithId();
+
+	it('should be possible to update a contact (the name property) when the data are valid', async () => {
+		const contact = createDataContact();
+		const myOwnContact = new Contact(contact);
+		contactRepository.get.resolves(myOwnContact);
+		const contactToUpdate = new Contact({...contact, name: 'test'});
+		contactRepository.save.resolves(contactToUpdate);
+		contactRepository.getByEmail.resolves([new Contact(contact)]);
+
+		const contactUpdated = await service.update(myOwnContact.getId(), contactToUpdate);
+
+		expect(contactUpdated).to.deep.includes(contactToUpdate);
+		expect(contactRepository.getByEmail.calledWith(contact.email)).to.be.true;
+		expect(contactRepository.get.calledWith(myOwnContact.getId())).to.be.true;
+		expect(contactRepository.save.calledWith(contactUpdated)).to.be.true;
+	});
+
+	it('an error should be returned when trying to update a contact with an email that already exist in db', (done) => {
+		const contactId = random();
+		const otherContact = new Contact(createContactData());
+		const email = random();
+		contactRepository.getByEmail.resolves([otherContact]);
+
+		service
+			.update(contactId, {email})
+			.then(() => {
+				done(new Error('Should not create a contact'));
+			})
+			.catch(() => {
+				expect(contactRepository.save.notCalled).to.be.true;
+				expect(contactRepository.get.notCalled).to.be.true;
+				expect(contactRepository.getByEmail.calledWith(email)).to.be.true;
+				done();
+			})
+			.catch(done);
+	});
+
+	it('an error should be returned when trying to update a contact that doesnt exists in db', (done) => {
+		const contactId = random();
+		const email = random();
+		contactRepository.get.rejects(new Error('error'));
+		contactRepository.getByEmail.resolves([]);
+
+		service
+			.update(contactId, {email})
+			.then(() => {
+				done(new Error('Should not create a contact'));
+			})
+			.catch(() => {
+				expect(contactRepository.save.notCalled).to.be.true;
+				expect(contactRepository.get.calledWith(contactId)).to.be.true;
+				expect(contactRepository.getByEmail.calledWith(email)).to.be.true;
+				done();
+			})
+			.catch(done);
 	});
 });

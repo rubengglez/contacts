@@ -48,5 +48,13 @@ describe('Contact API. Given the server is up', () => {
 			await contactsClient.del(contactCreated.id);
 			expect(await contactsClient.getAll()).to.have.lengthOf(0);
 		});
+
+		it('should be possible to update a contact', async () => {
+			const contactToUpdate = {...contactCreated, name: 'test'};
+			const contactUpdated = await contactsClient.update(contactToUpdate);
+			expect(contactUpdated.name).to.equals('test');
+			const contactUpdatedStored = await contactsClient.getById(contactToUpdate.id);
+			expect(contactUpdatedStored.name).to.equals('test');
+		});
 	});
 });

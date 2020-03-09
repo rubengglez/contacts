@@ -45,14 +45,29 @@ function ContactMongoRepository({urlMongo = 'mongodb://localhost:27017', dbName 
 		return new Contact(convertMongoId(contactMongo));
 	};
 
-	const save = async (data) => {
-		checkInitializated();
-		if (!data.id) {
-			const result = await collection.insertOne(Object.assign({}, data), {
-				ignoreUndefined: true,
-			});
-			return convertToContact(result.ops.pop());
+	const createContact = async (contact) => {
+		const result = await collection.insertOne(Object.assign({}, contact), {
+			ignoreUndefined: true,
+		});
+		return convertToContact(result.ops.pop());
+	};
+
+	const updateContact = async (contact) => {
+		const operation = await collection.updateOne(
+			{_id: new ObjectID(contact.getId())},
+			{
+				$set: contact,
+			},
+		);
+		if (!operation.result.nModified && !operation.result.ok) {
+			throw new Error('a error happened to update');
 		}
+		return contact;
+	};
+
+	const save = async (contact) => {
+		checkInitializated();
+		return contact.getId() ? updateContact(contact) : createContact(contact);
 	};
 
 	const getByEmail = async (email) => {
