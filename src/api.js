@@ -14,6 +14,7 @@ const validations = [
 ];
 
 const setupApi = async ({contactsService}, {port = 9000} = {}) => {
+	app.use(express.static('public'));
 	app.use(bodyParser.json());
 
 	app.post('/contacts', validations, async (req, res) => {
