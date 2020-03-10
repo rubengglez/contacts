@@ -26,7 +26,8 @@
 		"unit-tdd": "mocha -w tests/unit/**/*.spec.js",
 		"integration-tdd": "mocha -w tests/integration/**/*.spec.js",
 		"acceptance-tdd": "mocha -w tests/acceptance/**/*.spec.js",
-		"environment": "docker-compose up -d"
+		"environment": "docker-compose up -d",
+		"start": "node src/index.js"
 	},
 	"repository": {
 		"type": "git",
