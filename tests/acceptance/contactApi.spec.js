@@ -1,10 +1,18 @@
 const {expect} = require('chai');
-const contactsClient = require('../ContactsClient');
+const ContactsClient = require('../../public/react/ContactsClient');
 
 const ContactDataBuilder = require('../builders/ContactDataBuilder');
 const cleanDb = require('../utils/cleanDb');
 
+const axios = require('axios');
+
 describe('Contact API. Given the server is up', () => {
+	let contactsClient;
+
+	before(() => {
+		contactsClient = ContactsClient(axios);
+	});
+
 	afterEach(() => cleanDb());
 
 	const createContact = async () => {
