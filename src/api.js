@@ -26,6 +26,7 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			const contact = await contactsService.create(req.body);
 			res.status(201).json(contact);
 		} catch (err) {
+			console.error('error when saving a contact', err);
 			res.status(500).json({err});
 		}
 	});
@@ -35,6 +36,7 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			const contact = await contactsService.get(req.params.id);
 			res.status(200).json(contact);
 		} catch (err) {
+			console.error('error when getting a contact', err);
 			res.status(500).json({err});
 		}
 	});
@@ -44,6 +46,7 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			const contacts = await contactsService.getAll();
 			res.status(200).json(contacts);
 		} catch (err) {
+			console.error('error when getting the contacts', err);
 			res.status(500).json({err});
 		}
 	});
@@ -53,6 +56,7 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			await contactsService.remove(req.params.id);
 			res.status(200).json({});
 		} catch (err) {
+			console.error('error when deleting a contact', err);
 			res.status(500).json({err});
 		}
 	});
@@ -66,6 +70,7 @@ const setupApi = async ({contactsService}, {port = 9000} = {}) => {
 			const contact = await contactsService.update(req.params.id, req.body);
 			res.status(200).json(contact);
 		} catch (err) {
+			console.error('error when updatinga a contact', err);
 			res.status(500).json({err});
 		}
 	});
