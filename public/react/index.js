@@ -1,18 +1,16 @@
 /* eslint-disable no-undef */
 const contactsClient = ContactsClient(axios);
 
-const {createElement} = React;
 const render = ReactDOM.render;
-const html = htm.bind(createElement);
 
 const Title = ({numOfContacts}) => {
-	return html`
+	return (
 		<div>
 			<div>
-				<h1>Contacts - Num. of contacts: ${numOfContacts}</h1>
+				<h1>Contacts - Num. of contacts: {numOfContacts}</h1>
 			</div>
 		</div>
-	`;
+	);
 };
 
 const ContactForm = ({saveContact, defaultValue = {}}) => {
@@ -27,10 +25,10 @@ const ContactForm = ({saveContact, defaultValue = {}}) => {
 		return defaultValue[field] || '';
 	};
 
-	return html`
+	return (
 		<form
-			ref=${(el) => (myForm = el)}
-			onSubmit=${(e) => {
+			ref={(el) => (myForm = el)}
+			onSubmit={(e) => {
 				e.preventDefault();
 				saveContact({
 					name: nameInput.value,
@@ -45,8 +43,8 @@ const ContactForm = ({saveContact, defaultValue = {}}) => {
 			<input
 				placeholder="name"
 				required
-				defaultValue="${getDefaultValueFor('name')}"
-				ref=${(node) => {
+				defaultValue={getDefaultValueFor('name')}
+				ref={(node) => {
 					nameInput = node;
 				}}
 			/>
@@ -54,9 +52,9 @@ const ContactForm = ({saveContact, defaultValue = {}}) => {
 			<br />
 			<input
 				required
-				defaultValue="${getDefaultValueFor('lastName')}"
+				defaultValue={getDefaultValueFor('lastName')}
 				placeholder="last name"
-				ref=${(node) => {
+				ref={(node) => {
 					lastNameInput = node;
 				}}
 			/>
@@ -64,9 +62,9 @@ const ContactForm = ({saveContact, defaultValue = {}}) => {
 			<br />
 			<input
 				required
-				defaultValue="${getDefaultValueFor('email')}"
+				defaultValue={getDefaultValueFor('email')}
 				placeholder="email"
-				ref=${(node) => {
+				ref={(node) => {
 					emailInput = node;
 				}}
 			/>
@@ -74,9 +72,9 @@ const ContactForm = ({saveContact, defaultValue = {}}) => {
 			<br />
 			<input
 				required
-				defaultValue="${getDefaultValueFor('phone')}"
+				defaultValue={getDefaultValueFor('phone')}
 				placeholder="phone"
-				ref=${(node) => {
+				ref={(node) => {
 					phoneInput = node;
 				}}
 			/>
@@ -84,49 +82,47 @@ const ContactForm = ({saveContact, defaultValue = {}}) => {
 			<br />
 			<input
 				type="hidden"
-				ref=${(node) => {
+				ref={(node) => {
 					idInput = node;
 				}}
-				defaultValue="${getDefaultValueFor('id')}"
+				defaultValue={getDefaultValueFor('id')}
 			/>
-			<button type="submit" title="save">Save</button>
+			<button type="submit" title="save">
+				Save
+			</button>
 		</form>
-	`;
+	);
 };
 
 const Contact = ({contact, remove, update}) => {
-	return html`
+	return (
 		<li>
-			<span>Name: ${contact.name}</span><br />
-			<span>LastName: ${contact.lastName}</span><br />
-			<span>Email: ${contact.email}</span><br />
-			<span>Phone: ${contact.phone}</span><br />
-			<button onClick=${() => remove(contact.id)}>Remove</button>
-			<button onClick=${() => update(contact.id)}>Update</button>
+			<span>Name: {contact.name}</span>
+			<br />
+			<span>LastName: {contact.lastName}</span>
+			<br />
+			<span>Email: {contact.email}</span>
+			<br />
+			<span>Phone: {contact.phone}</span>
+			<br />
+			<button onClick={() => remove(contact.id)}>Remove</button>
+			<button onClick={() => update(contact.id)}>Update</button>
 		</li>
-	`;
+	);
 };
 
 const ContactList = ({contacts, remove, update}) => {
 	const contactItem = contacts.map((contact) => {
-		return html`
-			<${Contact} contact="${contact}" key="${contact.id}" remove="${remove}" update="${update}" />
-		`;
+		return <Contact contact={contact} key={contact.id} remove={remove} update={update} />;
 	});
-	return html`
-		<ul>
-			${contactItem}
-		</ul>
-	`;
+	return <ul>{contactItem}</ul>;
 };
 
 const ContactErrors = ({error}) => {
 	const styles = {
 		color: 'red',
 	};
-	return html`
-		<p style="${styles}">${error}</p>
-	`;
+	return <p style={styles}>{error}</p>;
 };
 
 class ContactsApp extends React.Component {
@@ -211,26 +207,21 @@ class ContactsApp extends React.Component {
 	}
 
 	render() {
-		return html`
+		return (
 			<div>
-				<${Title} numOfContacts="${this.state.contacts.length}" />
-				<${ContactForm}
-					saveContact="${this.saveContact.bind(this)}"
-					defaultValue="${this.state.defaultValue}"
+				<Title numOfContacts={this.state.contacts.length} />
+				<ContactForm
+					saveContact={this.saveContact.bind(this)}
+					defaultValue={this.state.defaultValue}
 				/>
-				<${ContactErrors} error="${this.state.error}" />
-				<${ContactList}
-					contacts="${this.state.contacts}"
-					remove="${this.removeContact.bind(this)}"
-					update="${this.getContactToUpdate.bind(this)}"
+				<ContactErrors error={this.state.error} />
+				<ContactList
+					contacts={this.state.contacts}
+					remove={this.removeContact.bind(this)}
+					update={this.getContactToUpdate.bind(this)}
 				/>
 			</div>
-		`;
+		);
 	}
 }
-render(
-	html`
-		<${ContactsApp} />
-	`,
-	document.getElementById('root'),
-);
+render(<ContactsApp />, document.getElementById('root'));
